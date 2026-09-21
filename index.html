@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFicha • Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <section id="loginScreen" class="login">
+    <div class="login__bg"></div>
+
+    <div class="login__card">
+      <div class="login__brand">
+        <div class="logo">🎓</div>
+        <h1>EduFicha</h1>
+        <p>Sistema Escolar Digital</p>
+      </div>
+
+      <form id="loginForm" class="login__form" novalidate>
+        <div class="field">
+          <label for="loginEmail">E-mail institucional</label>
+          <input type="email" id="loginEmail" placeholder="seu.email@escola.com"
+                 autocomplete="username" required />
+        </div>
+
+        <div class="field">
+          <label for="loginSenha">Senha</label>
+          <input type="password" id="loginSenha" placeholder="••••••"
+                 autocomplete="current-password" required />
+        </div>
+
+        <div class="field">
+          <label>Perfil de acesso</label>
+          <div class="perfil-toggle" id="perfilToggle">
+            <button type="button" class="perfil-btn is-active" data-perfil="professor">
+              <span>👩‍🏫</span> Professor
+            </button>
+            <button type="button" class="perfil-btn" data-perfil="diretor">
+              <span>🧑‍💼</span> Diretor
+            </button>
+          </div>
+        </div>
+
+        <p id="loginErro" class="login__erro" hidden></p>
+
+        <button type="submit" class="btn btn--primary btn--block">Entrar no sistema</button>
+      </form>
+
+      <div class="login__demo">
+        <p class="login__demo-title">Acessos de demonstração</p>
+        <button type="button" class="demo-chip"
+                data-email="professor@escola.com" data-senha="123456" data-perfil="professor">
+          <strong>Prof. Ana</strong> · professor@escola.com / 123456
+        </button>
+        <button type="button" class="demo-chip"
+                data-email="professor2@escola.com" data-senha="123456" data-perfil="professor">
+          <strong>Prof. Bruno</strong> · professor2@escola.com / 123456
+        </button>
+        <button type="button" class="demo-chip"
+                data-email="professor3@escola.com" data-senha="123456" data-perfil="professor">
+          <strong>Prof. Carla</strong> · professor3@escola.com / 123456
+        </button>
+        <button type="button" class="demo-chip"
+                data-email="diretor@escola.com" data-senha="123456" data-perfil="diretor">
+          <strong>Diretor</strong> · diretor@escola.com / 123456
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <script src="login.js"></script>
+</body>
+</html>

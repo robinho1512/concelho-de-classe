@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFicha • Sistema</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="app" class="app">
+    <div class="overlay" id="overlay"></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <span class="logo logo--sm">🎓</span>
+        <div class="sidebar__brand-txt">
+          <strong>EduFicha</strong>
+          <small>Sistema Escolar</small>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav" id="sidebarNav"></nav>
+
+      <div class="sidebar__foot">
+        <div class="userbox">
+          <div class="avatar" id="userAvatar">?</div>
+          <div class="userbox__info">
+            <strong id="userName">—</strong>
+            <small id="userRole">—</small>
+          </div>
+        </div>
+        <button class="btn btn--ghost btn--block" id="logoutBtn">⏻ Sair</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+        <div class="topbar__titles">
+          <h2 id="pageTitle">—</h2>
+          <p id="pageSubtitle">—</p>
+        </div>
+        <div class="topbar__date" id="topbarDate"></div>
+      </header>
+
+      <main class="content" id="content"></main>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
