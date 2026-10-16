@@ -3,53 +3,113 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduFicha • Sistema</title>
+  <title>SGAE • Sistema de Gestão Escolar Estadual</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="page-app">
 
   <div id="app" class="app">
     <div class="overlay" id="overlay"></div>
 
+    <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar__brand">
-        <span class="logo logo--sm">🎓</span>
+        <span class="crest crest--sm">🏛️</span>
         <div class="sidebar__brand-txt">
-          <strong>EduFicha</strong>
-          <small>Sistema Escolar</small>
+          <strong>SGAE</strong>
+          <small>Rede Estadual</small>
         </div>
+      </div>
+
+      <div class="sidebar__escola" id="sidebarEscola">
+        <small>Unidade</small>
+        <strong id="escolaNome">—</strong>
       </div>
 
       <nav class="sidebar__nav" id="sidebarNav"></nav>
 
       <div class="sidebar__foot">
-        <div class="userbox">
-          <div class="avatar" id="userAvatar">?</div>
-          <div class="userbox__info">
-            <strong id="userName">—</strong>
-            <small id="userRole">—</small>
-          </div>
+        <button class="btn btn--ghost btn--block" id="logoutBtn">⏻ Encerrar sessão</button>
+        <div class="sidebar__meta">
+          <span id="sessaoInfo">—</span>
         </div>
-        <button class="btn btn--ghost btn--block" id="logoutBtn">⏻ Sair</button>
       </div>
     </aside>
 
+    <!-- MAIN -->
     <div class="main">
       <header class="topbar">
         <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
-        <div class="topbar__titles">
-          <h2 id="pageTitle">—</h2>
+
+        <nav class="crumbs" id="crumbs" aria-label="Você está em"></nav>
+
+        <div class="topbar__actions">
+          <div class="search-box" role="search">
+            <span class="search-box__ico">🔎</span>
+            <input type="text" id="buscaGlobal" placeholder="Buscar turma, professor ou ficha..." />
+          </div>
+
+          <button class="icon-btn" id="notifBtn" aria-label="Notificações">
+            🔔<span class="notif-dot" id="notifCount" hidden>0</span>
+          </button>
+
+          <div class="user-chip" id="userChip" tabindex="0">
+            <div class="avatar avatar--sm" id="userAvatar">?</div>
+            <div class="user-chip__info">
+              <strong id="userName">—</strong>
+              <small id="userRole">—</small>
+            </div>
+            <span class="user-chip__caret">▾</span>
+
+            <div class="user-menu" id="userMenu" hidden>
+              <button data-action="perfil">👤 Meu perfil</button>
+              <button data-action="senha">🔑 Alterar senha</button>
+              <button data-action="auditoria">📜 Minha atividade</button>
+              <hr />
+              <button data-action="sair" class="danger">⏻ Sair</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="page-head">
+        <div>
+          <h1 id="pageTitle">—</h1>
           <p id="pageSubtitle">—</p>
         </div>
-        <div class="topbar__date" id="topbarDate"></div>
-      </header>
+        <div class="page-head__tools" id="pageTools"></div>
+      </div>
 
       <main class="content" id="content"></main>
     </div>
   </div>
 
-  <div id="toast" class="toast" hidden></div>
+  <!-- MODAL CONFIRM -->
+  <div class="modal-root" id="modalRoot" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal" role="dialog" aria-modal="true">
+      <header class="modal__head">
+        <h3 id="modalTitle">Confirmar</h3>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal__body" id="modalBody"></div>
+      <footer class="modal__foot" id="modalFoot"></footer>
+    </div>
+  </div>
 
+  <!-- DRAWER NOTIFICAÇÕES -->
+  <div class="drawer" id="notifDrawer" hidden>
+    <div class="drawer__backdrop" data-close></div>
+    <aside class="drawer__panel">
+      <header class="drawer__head">
+        <h3>Notificações</h3>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="drawer__body" id="notifList"></div>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
   <script src="script.js"></script>
 </body>
 </html>
