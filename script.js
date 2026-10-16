@@ -3,7 +3,7 @@ var ESCOLAS = [
   { id:"e2", nome:"EE Getúlio Vargas",   cidade:"Contagem",       alunos:620 },
   { id:"e3", nome:"EE Machado de Assis", cidade:"Betim",          alunos:350 }
 ];
-var USERS = [
+var DEFAULT_USERS = [
   { email:"professor@edu.gov.br",   senha:"123456", perfil:"professor",   nome:"Prof. Ana Souza",      escolaId:"e1" },
   { email:"coordenador@edu.gov.br", senha:"123456", perfil:"coordenador", nome:"Coord. Marcos Reis",   escolaId:"e1" },
   { email:"diretor@edu.gov.br",     senha:"123456", perfil:"diretor",     nome:"Dir. Carlos Mendes",   escolaId:"e1" },
@@ -52,7 +52,8 @@ var MENUS = {
       { id:"relatorios", icone:"📊", label:"Relatórios" }]},
     { grupo:"Gestão", itens:[
       { id:"dashboard", icone:"📈", label:"Painel" },
-      { id:"perguntas", icone:"⚙️", label:"Gerenciar Perguntas" },
+      { id:"professores", icone:"👥", label:"Professores" },
+      { id:"perguntas", icone:"⚙️", label:"Perguntas da Ficha" },
       { id:"auditoria", icone:"📜", label:"Auditoria" }]},
     { grupo:"Conta", itens:[{ id:"perfil", icone:"👤", label:"Meu Perfil" }]}
   ],
@@ -63,14 +64,15 @@ var MENUS = {
       { id:"relatorios", icone:"📊", label:"Relatórios da Rede" }]},
     { grupo:"Gestão", itens:[
       { id:"dashboard", icone:"📈", label:"Painel Estadual" },
-      { id:"perguntas", icone:"⚙️", label:"Gerenciar Perguntas" },
+      { id:"professores", icone:"👥", label:"Professores" },
+      { id:"perguntas", icone:"⚙️", label:"Perguntas da Ficha" },
       { id:"auditoria", icone:"📜", label:"Auditoria Geral" }]},
     { grupo:"Conta", itens:[{ id:"perfil", icone:"👤", label:"Meu Perfil" }]}
   ]
 };
 var K_FICHA="sgae.ficha.v1", K_REPORTS="sgae.reports.v1", K_DRAFTS="sgae.drafts.v1",
     K_SESSION="sgae.session.v1", K_AUDIT="sgae.audit.v1", K_NOTIF="sgae.notif.v1",
-    K_SEED="sgae.seed.v3", K_RESET="sgae.reset.v3";
+    K_USERS="sgae.users.v2", K_SEED="sgae.seed.v4", K_RESET="sgae.reset.v4";
 
 function $(s,r){ return (r||document).querySelector(s); }
 function $$(s,r){ return (r||document).querySelectorAll(s); }
@@ -90,7 +92,14 @@ function saveDrafts(d){ save(K_DRAFTS,d); }
 function getSessao(){ return load(K_SESSION,null); }
 function getEscola(id){ for(var i=0;i<ESCOLAS.length;i++) if(ESCOLAS[i].id===id) return ESCOLAS[i]; return null; }
 function getTurma(id){ for(var i=0;i<TURMAS.length;i++) if(TURMAS[i].id===id) return TURMAS[i]; return null; }
-function getUsuarioLogado(){ var s=getSessao(); if(!s) return null; for(var i=0;i<USERS.length;i++) if(USERS[i].email===s.email) return USERS[i]; return null; }
+function getUsuarios() { var v = load(K_USERS, null); if (v && v.length) return v; return DEFAULT_USERS.slice(); }
+function saveUsuarios(u) { save(K_USERS, u); }
+function getUsuarioLogado(){
+  var s=getSessao(); if(!s) return null;
+  var lista=getUsuarios();
+  for(var i=0;i<lista.length;i++) if(lista[i].email===s.email) return lista[i];
+  return null;
+}
 function turmasVisiveis(u){ if(u.perfil==="rede") return TURMAS.slice(); return TURMAS.filter(function(t){return t.escolaId===u.escolaId;}); }
 
 function toast(msg,tipo){
@@ -189,13 +198,16 @@ function seedDadosFicticios(){
 
 document.addEventListener("DOMContentLoaded",function(){
   if(!localStorage.getItem(K_RESET)){
-    ["sgae.ficha.v1","sgae.reports.v1","sgae.drafts.v1","sgae.audit.v1","sgae.notif.v1","sgae.seed.v3"].forEach(function(k){ localStorage.removeItem(k); });
+    ["sgae.ficha.v1","sgae.reports.v1","sgae.drafts.v1","sgae.audit.v1","sgae.notif.v1"].forEach(function(k){ localStorage.removeItem(k); });
     localStorage.setItem(K_RESET,"1");
   }
+  if (!localStorage.getItem(K_USERS)) saveUsuarios(DEFAULT_USERS);
+
   var s=getSessao();
   if(!s||!s.email||!s.expiresAt||s.expiresAt<Date.now()){ if(s) localStorage.removeItem(K_SESSION); window.location.href="index.html"; return; }
   var u=getUsuarioLogado(); if(!u){ window.location.href="index.html"; return; }
   currentUser=u;
+
   s.expiresAt=Date.now()+8*60*60*1000; save(K_SESSION,s);
   seedDadosFicticios();
 
@@ -236,6 +248,7 @@ document.addEventListener("DOMContentLoaded",function(){
 function rotuloPerfil(p){ return {professor:"Professor(a)",coordenador:"Coordenador(a)",diretor:"Diretor(a)",rede:"Admin. da Rede"}[p]||p; }
 function primeiraPagina(p){ return {professor:"turmas",coordenador:"fichas-escola",diretor:"fichas-escola",rede:"escolas"}[p]||"perfil"; }
 function fazerLogout(){ logAudit("Logout","Saída"); localStorage.removeItem(K_SESSION); window.location.href="index.html"; }
+
 function buildSidebar(perfil){
   var nav=$("#sidebarNav"); nav.innerHTML="";
   (MENUS[perfil]||[]).forEach(function(g){
@@ -252,6 +265,7 @@ function buildSidebar(perfil){
     nav.appendChild(wrap);
   });
 }
+
 var TITULOS={
   turmas:["Minhas Turmas","Clique em uma turma para preencher a ficha geral"],
   ficha:["Ficha da Turma","Responda as seções abaixo"],
@@ -259,13 +273,15 @@ var TITULOS={
   "fichas-escola":["Fichas da Escola","Fichas recebidas nesta unidade"],
   relatorios:["Relatórios","Respostas consolidadas por turma"],
   dashboard:["Painel","Indicadores gerais"],
-  perguntas:["Gerenciar Perguntas","Adicionar, editar ou remover"],
+  professores:["Professores","Cadastrar, editar ou remover professores"],
+  perguntas:["Perguntas da Ficha","Adicionar, editar ou remover perguntas"],
   escolas:["Escolas da Rede","Visão geral das unidades"],
   "ver-escola":["Escola","Indicadores e turmas"],
   auditoria:["Auditoria","Registro de ações"],
   perfil:["Meu Perfil","Informações da conta"],
   "ver-ficha":["Consolidado","Respostas agrupadas por pergunta"]
 };
+
 function navigate(page,param){
   currentPage=page;
   if(page==="ver-ficha") fichaParaVer=param;
@@ -282,11 +298,12 @@ function navigate(page,param){
 function atualizarCrumbs(page){
   var c=$("#crumbs"); if(!c) return;
   var trilha=["Início"];
-  var map={turmas:"Minhas Turmas",ficha:"Ficha",historico:"Histórico","fichas-escola":"Fichas",relatorios:"Relatórios",dashboard:"Painel",perguntas:"Perguntas",escolas:"Escolas","ver-escola":"Escola",auditoria:"Auditoria",perfil:"Perfil","ver-ficha":"Consolidado"};
+  var map={turmas:"Minhas Turmas",ficha:"Ficha",historico:"Histórico","fichas-escola":"Fichas",relatorios:"Relatórios",dashboard:"Painel",professores:"Professores",perguntas:"Perguntas",escolas:"Escolas","ver-escola":"Escola",auditoria:"Auditoria",perfil:"Perfil","ver-ficha":"Consolidado"};
   if(map[page]) trilha.push(map[page]);
   c.innerHTML=trilha.map(function(t,i){ return (i?'<span class="crumbs__sep">›</span>':'')+'<span class="crumbs__item">'+escapeHtml(t)+'</span>'; }).join("");
 }
 function closeSidebarMobile(){ var sb=$("#sidebar"),ov=$("#overlay"); if(sb) sb.classList.remove("is-open"); if(ov) ov.classList.remove("is-open"); }
+
 function render(page){
   var c=$("#content"); c.innerHTML="";
   switch(page){
@@ -296,6 +313,7 @@ function render(page){
     case "fichas-escola": renderFichasEscola(c); break;
     case "relatorios": renderRelatorios(c); break;
     case "dashboard": renderDashboard(c); break;
+    case "professores": renderProfessores(c); break;
     case "perguntas": renderPerguntas(c); break;
     case "escolas": renderEscolas(c); break;
     case "ver-escola": renderVerEscola(c); break;
@@ -305,6 +323,189 @@ function render(page){
   }
 }
 
+/* PROFESSORES */
+function renderProfessores(c){
+  var todos = getUsuarios();
+  var eu = currentUser;
+  var visiveis = todos.filter(function(u){
+    if (u.perfil !== "professor" && u.perfil !== "coordenador") return false;
+    if (eu.perfil === "rede") return true;
+    return u.escolaId === eu.escolaId;
+  });
+
+  var box = document.createElement("div"); box.className = "card";
+  box.innerHTML = '<div class="card__head">' +
+      '<div><h3>Professores e Coordenadores</h3><p>' + visiveis.length + ' cadastro(s) nesta unidade</p></div>' +
+      '<div class="toolbar">' +
+        '<div class="field" style="min-width:180px"><input id="filtroProf" placeholder="🔎 Buscar por nome ou e-mail..." /></div>' +
+        '<button class="btn btn--primary btn--sm" id="btnNovoProf">+ Cadastrar</button>' +
+      '</div>' +
+    '</div><div id="listaProfs"></div>';
+  c.appendChild(box);
+
+  function desenhar(f){
+    f = (f || "").toLowerCase();
+    var lista = $("#listaProfs");
+    var filtrados = visiveis.filter(function(u){
+      return !f || u.nome.toLowerCase().indexOf(f) >= 0 || u.email.toLowerCase().indexOf(f) >= 0;
+    });
+
+    if (!filtrados.length){
+      lista.innerHTML = emptyBlock("👥","Nenhum professor cadastrado","Clique em \"+ Cadastrar\" para adicionar.");
+      return;
+    }
+
+    lista.innerHTML = '<div class="table-wrap"><table>' +
+      '<thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Escola</th><th style="width:120px"></th></tr></thead>' +
+      '<tbody>' +
+        filtrados.map(function(u){
+          var e = getEscola(u.escolaId);
+          var euMesmo = u.email === eu.email;
+          return '<tr>' +
+            '<td><strong>' + escapeHtml(u.nome) + '</strong>' + (euMesmo ? ' <span class="badge badge--ok">você</span>' : '') + '</td>' +
+            '<td>' + escapeHtml(u.email) + '</td>' +
+            '<td><span class="badge badge--info">' + escapeHtml(rotuloPerfil(u.perfil)) + '</span></td>' +
+            '<td>' + escapeHtml(e ? e.nome : "—") + '</td>' +
+            '<td>' +
+              '<button class="btn btn--ghost btn--sm" data-edit="' + u.email + '">✏️</button> ' +
+              '<button class="btn btn--danger btn--sm" data-del="' + u.email + '"' + (euMesmo ? ' disabled' : '') + '>🗑️</button>' +
+            '</td>' +
+          '</tr>';
+        }).join("") +
+      '</tbody></table></div>';
+
+    lista.querySelectorAll("[data-edit]").forEach(function(b){
+      b.addEventListener("click", function(){ abrirModalEditarProfessor(b.dataset.edit); });
+    });
+    lista.querySelectorAll("[data-del]").forEach(function(b){
+      b.addEventListener("click", function(){ removerProfessor(b.dataset.del); });
+    });
+  }
+
+  desenhar("");
+  $("#filtroProf").addEventListener("input", function(e){ desenhar(e.target.value); });
+  $("#btnNovoProf").addEventListener("click", abrirModalNovoProfessor);
+}
+
+function abrirModalNovoProfessor(){
+  var escopo = currentUser.perfil === "rede" ? ESCOLAS : ESCOLAS.filter(function(e){ return e.id === currentUser.escolaId; });
+  var html =
+    '<div class="field"><label>Nome completo *</label><input id="npNome" placeholder="Ex.: Prof. João Silva" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>E-mail institucional *</label><input type="email" id="npEmail" placeholder="nome.sobrenome@edu.gov.br" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>Senha inicial *</label><input type="text" id="npSenha" value="123456" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>Perfil</label><select id="npPerfil">' +
+      '<option value="professor">Professor(a)</option>' +
+      '<option value="coordenador">Coordenador(a)</option>' +
+    '</select></div>' +
+    '<div class="field" style="margin-top:10px"><label>Escola</label><select id="npEscola">' +
+      escopo.map(function(e){ return '<option value="' + e.id + '">' + escapeHtml(e.nome) + '</option>'; }).join("") +
+    '</select></div>';
+
+  abrirModal("Cadastrar professor", html, [
+    { label: "Cancelar", className: "btn--ghost" },
+    { label: "Cadastrar", className: "btn--primary", onClick: function(){
+      var nome = $("#npNome").value.trim();
+      var email = $("#npEmail").value.trim().toLowerCase();
+      var senha = $("#npSenha").value.trim();
+      var perfil = $("#npPerfil").value;
+      var escolaId = $("#npEscola").value;
+
+      if (!nome) return toast("Informe o nome do professor", "warn");
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast("E-mail inválido", "warn");
+      if (!senha || senha.length < 6) return toast("A senha precisa ter pelo menos 6 caracteres", "warn");
+
+      var lista = getUsuarios();
+      if (lista.filter(function(u){ return u.email === email; })[0]) return toast("Já existe um usuário com esse e-mail", "err");
+
+      lista.push({ email: email, senha: senha, perfil: perfil, nome: nome, escolaId: escolaId });
+      saveUsuarios(lista);
+      logAudit("Cadastrou professor", nome + " — " + email);
+      pushNotif("Novo professor cadastrado", nome + " (" + email + ")", "diretor");
+      toast("Professor cadastrado com sucesso!", "ok");
+      navigate("professores");
+    }}
+  ]);
+}
+
+function abrirModalEditarProfessor(email){
+  var lista = getUsuarios();
+  var u = lista.filter(function(x){ return x.email === email; })[0];
+  if (!u) return toast("Usuário não encontrado", "err");
+
+  var escopo = currentUser.perfil === "rede" ? ESCOLAS : ESCOLAS.filter(function(e){ return e.id === currentUser.escolaId; });
+  var html =
+    '<div class="field"><label>Nome completo *</label><input id="epNome" value="' + escapeHtml(u.nome) + '" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>E-mail institucional *</label><input type="email" id="epEmail" value="' + escapeHtml(u.email) + '" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>Nova senha (deixe em branco para manter)</label><input type="text" id="epSenha" placeholder="••••••" /></div>' +
+    '<div class="field" style="margin-top:10px"><label>Perfil</label><select id="epPerfil">' +
+      '<option value="professor"' + (u.perfil === "professor" ? " selected" : "") + '>Professor(a)</option>' +
+      '<option value="coordenador"' + (u.perfil === "coordenador" ? " selected" : "") + '>Coordenador(a)</option>' +
+    '</select></div>' +
+    '<div class="field" style="margin-top:10px"><label>Escola</label><select id="epEscola">' +
+      escopo.map(function(e){ return '<option value="' + e.id + '"' + (e.id === u.escolaId ? " selected" : "") + '>' + escapeHtml(e.nome) + '</option>'; }).join("") +
+    '</select></div>';
+
+  abrirModal("Editar professor", html, [
+    { label: "Cancelar", className: "btn--ghost" },
+    { label: "Salvar", className: "btn--primary", onClick: function(){
+      var nome = $("#epNome").value.trim();
+      var novoEmail = $("#epEmail").value.trim().toLowerCase();
+      var novaSenha = $("#epSenha").value.trim();
+      var perfil = $("#epPerfil").value;
+      var escolaId = $("#epEscola").value;
+
+      if (!nome) return toast("Informe o nome", "warn");
+      if (!novoEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(novoEmail)) return toast("E-mail inválido", "warn");
+
+      var todos = getUsuarios();
+      var conflito = todos.filter(function(x){ return x.email === novoEmail && x.email !== u.email; })[0];
+      if (conflito) return toast("Já existe um usuário com esse e-mail", "err");
+
+      if (novaSenha && novaSenha.length < 6) return toast("A nova senha precisa ter 6+ caracteres", "warn");
+
+      todos.forEach(function(x){
+        if (x.email === u.email) {
+          x.nome = nome; x.email = novoEmail; x.perfil = perfil; x.escolaId = escolaId;
+          if (novaSenha) x.senha = novaSenha;
+        }
+      });
+      saveUsuarios(todos);
+
+      if (u.email === currentUser.email) {
+        var s = getSessao();
+        s.nome = nome; s.email = novoEmail; s.perfil = perfil; s.escolaId = escolaId;
+        save(K_SESSION, s);
+        currentUser = getUsuarioLogado();
+        $("#userName").textContent = currentUser.nome;
+        $("#userAvatar").textContent = currentUser.nome.charAt(0).toUpperCase();
+        $("#escolaNome").textContent = currentUser.perfil === "rede" ? "Rede Estadual" : (getEscola(currentUser.escolaId) || {}).nome || "—";
+      }
+
+      logAudit("Editou professor", nome + " — " + novoEmail);
+      toast("Professor atualizado com sucesso!", "ok");
+      navigate("professores");
+    }}
+  ]);
+}
+
+function removerProfessor(email){
+  if (email === currentUser.email) return toast("Você não pode remover seu próprio usuário", "warn");
+  var lista = getUsuarios();
+  var u = lista.filter(function(x){ return x.email === email; })[0];
+  if (!u) return;
+
+  confirmar("Remover professor",
+    "Tem certeza que deseja remover " + u.nome + " (" + email + ")? Esta ação não pode ser desfeita.",
+    function(){
+      var nova = getUsuarios().filter(function(x){ return x.email !== email; });
+      saveUsuarios(nova);
+      logAudit("Removeu professor", u.nome + " — " + email);
+      toast("Professor removido", "ok");
+      navigate("professores");
+    }, "Remover");
+}
+
+/* PROFESSOR */
 function renderTurmas(c){
   var visiveis=turmasVisiveis(currentUser);
   var box=document.createElement("div"); box.className="card";
@@ -541,7 +742,7 @@ function renderPerguntas(c){
   ficha.forEach(function(sec,idx){
     var el=document.createElement("div"); el.className="card";
     el.innerHTML='<div class="card__head"><div><h3>'+sec.icone+' '+escapeHtml(sec.titulo)+'</h3><p>'+sec.perguntas.length+' pergunta(s)</p></div>'+
-      '<button class="btn btn--primary btn--sm" data-add="'+idx+'">+ Adicionar</button></div><div>'+
+      '<button class="btn btn--primary btn--sm" data-add="'+idx+'">+ Adicionar pergunta</button></div><div>'+
       (sec.perguntas.length?sec.perguntas.map(function(p){
         return '<div style="display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid #f1f5f9;padding:8px 0"><span style="flex:1;font-size:12.5px">'+escapeHtml(p.texto)+'</span>'+
           '<button class="btn btn--ghost btn--sm" data-edit="'+idx+':'+p.id+'">✏️</button><button class="btn btn--danger btn--sm" data-del="'+idx+':'+p.id+'">🗑️</button></div>';
@@ -549,15 +750,7 @@ function renderPerguntas(c){
     c.appendChild(el);
   });
   $$("[data-add]").forEach(function(b){
-    b.addEventListener("click",function(){
-      var idx=+b.dataset.add;
-      var txt=prompt("Texto da nova pergunta:");
-      if(!txt||!txt.trim()) return;
-      var f=getFicha();
-      f[idx].perguntas.push({id:uid(),texto:txt.trim()});
-      setFicha(f); logAudit("Adicionou pergunta",f[idx].titulo);
-      toast("Pergunta adicionada","ok"); navigate("perguntas");
-    });
+    b.addEventListener("click",function(){ abrirModalAdicionarPergunta(+b.dataset.add); });
   });
   $$("[data-edit]").forEach(function(b){
     b.addEventListener("click",function(){
@@ -565,11 +758,19 @@ function renderPerguntas(c){
       var f=getFicha();
       var item=f[+p[0]].perguntas.filter(function(x){ return x.id===p[1]; })[0];
       if(!item) return;
-      var novo=prompt("Editar pergunta:",item.texto);
-      if(!novo||!novo.trim()) return;
-      item.texto=novo.trim(); setFicha(f);
-      logAudit("Editou pergunta",novo);
-      toast("Pergunta atualizada","ok"); navigate("perguntas");
+      abrirModal("Editar pergunta",
+        '<div class="field"><label>Texto da pergunta</label><textarea id="editPergunta" rows="3">'+escapeHtml(item.texto)+'</textarea></div>',
+        [
+          {label:"Cancelar",className:"btn--ghost"},
+          {label:"Salvar",className:"btn--primary",onClick:function(){
+            var txt=$("#editPergunta").value.trim();
+            if(!txt) return toast("Digite o texto","warn");
+            item.texto=txt; setFicha(f);
+            logAudit("Editou pergunta",txt);
+            toast("Pergunta atualizada","ok");
+            navigate("perguntas");
+          }}
+        ]);
     });
   });
   $$("[data-del]").forEach(function(b){
@@ -583,6 +784,24 @@ function renderPerguntas(c){
       },"Remover");
     });
   });
+}
+function abrirModalAdicionarPergunta(idx){
+  var f=getFicha();
+  var sec=f[idx];
+  abrirModal('Adicionar pergunta em "' + sec.titulo + '"',
+    '<div class="field"><label>Texto da pergunta</label><textarea id="novaPergunta" rows="3" placeholder="Ex.: Descreva os principais desafios da turma neste bimestre."></textarea></div>',
+    [
+      {label:"Cancelar",className:"btn--ghost"},
+      {label:"Adicionar",className:"btn--primary",onClick:function(){
+        var txt=$("#novaPergunta").value.trim();
+        if(!txt) return toast("Digite o texto da pergunta","warn");
+        f[idx].perguntas.push({id:uid(),texto:txt});
+        setFicha(f);
+        logAudit("Adicionou pergunta",sec.titulo + " — " + txt);
+        toast("Pergunta adicionada!","ok");
+        navigate("perguntas");
+      }}
+    ]);
 }
 function renderAuditoria(c){
   var arr=getAuditoria();
@@ -633,7 +852,10 @@ function abrirModalSenha(){
         if(!a||!n||!c2) return toast("Preencha todos os campos","warn");
         if(n!==c2) return toast("As senhas não coincidem","err");
         if(n.length<6) return toast("Mínimo 6 caracteres","warn");
-        if(a!=="123456") return toast("Senha atual incorreta","err");
+        if(a!==currentUser.senha) return toast("Senha atual incorreta","err");
+        var lista=getUsuarios();
+        lista.forEach(function(u){ if(u.email===currentUser.email) u.senha=n; });
+        saveUsuarios(lista); currentUser.senha=n;
         logAudit("Alterou senha",""); toast("Senha alterada","ok");
       }}
     ]);
