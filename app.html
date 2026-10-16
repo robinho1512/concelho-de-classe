@@ -8,68 +8,66 @@
 </head>
 <body class="page-app">
 
-  <div id="app" class="app">
-    <div class="overlay" id="overlay"></div>
+  <div class="overlay" id="overlay"></div>
 
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar__brand">
-        <span class="crest crest--sm">🏛️</span>
-        <div class="sidebar__brand-txt">
-          <strong>SGAE</strong>
-          <small>Rede Estadual</small>
-        </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <span class="crest crest--sm">🏛️</span>
+      <div class="sidebar__brand-txt">
+        <strong>SGAE</strong>
+        <small>Rede Estadual</small>
       </div>
-      <div class="sidebar__escola" id="sidebarEscola">
-        <small>Unidade</small>
-        <strong id="escolaNome">—</strong>
-      </div>
-      <nav class="sidebar__nav" id="sidebarNav"></nav>
-      <div class="sidebar__foot">
-        <button class="btn btn--ghost btn--block" id="logoutBtn">⏻ Encerrar sessão</button>
-        <div class="sidebar__meta"><span id="sessaoInfo">—</span></div>
-      </div>
-    </aside>
-
-    <div class="main">
-      <header class="topbar">
-        <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
-        <nav class="crumbs" id="crumbs"></nav>
-        <div class="topbar__actions">
-          <div class="search-box">
-            <span class="search-box__ico">🔎</span>
-            <input type="text" id="buscaGlobal" placeholder="Buscar..." />
-          </div>
-          <button class="icon-btn" id="notifBtn" aria-label="Notificações">
-            🔔<span class="notif-dot" id="notifCount" hidden>0</span>
-          </button>
-          <div class="user-chip" id="userChip" tabindex="0">
-            <div class="avatar avatar--sm" id="userAvatar">?</div>
-            <div class="user-chip__info">
-              <strong id="userName">—</strong>
-              <small id="userRole">—</small>
-            </div>
-            <span class="user-chip__caret">▾</span>
-            <div class="user-menu" id="userMenu" hidden>
-              <button data-action="perfil">👤 Meu perfil</button>
-              <button data-action="senha">🔑 Alterar senha</button>
-              <button data-action="auditoria">📜 Minha atividade</button>
-              <hr />
-              <button data-action="sair" class="danger">⏻ Sair</button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div class="page-head">
-        <div>
-          <h1 id="pageTitle">—</h1>
-          <p id="pageSubtitle">—</p>
-        </div>
-        <div class="page-head__tools" id="pageTools"></div>
-      </div>
-
-      <main class="content" id="content"></main>
     </div>
+    <div class="sidebar__escola" id="sidebarEscola">
+      <small>Unidade</small>
+      <strong id="escolaNome">—</strong>
+    </div>
+    <nav class="sidebar__nav" id="sidebarNav"></nav>
+    <div class="sidebar__foot">
+      <button class="btn btn--ghost btn--block" id="logoutBtn">⏻ Encerrar sessão</button>
+      <div class="sidebar__meta"><span id="sessaoInfo">—</span></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" id="menuBtn" aria-label="Abrir menu">☰</button>
+      <nav class="crumbs" id="crumbs"></nav>
+      <div class="topbar__actions">
+        <div class="search-box">
+          <span class="search-box__ico">🔎</span>
+          <input type="text" id="buscaGlobal" placeholder="Buscar..." />
+        </div>
+        <button class="icon-btn" id="notifBtn" aria-label="Notificações">
+          🔔<span class="notif-dot" id="notifCount" hidden>0</span>
+        </button>
+        <div class="user-chip" id="userChip" tabindex="0">
+          <div class="avatar avatar--sm" id="userAvatar">?</div>
+          <div class="user-chip__info">
+            <strong id="userName">—</strong>
+            <small id="userRole">—</small>
+          </div>
+          <span class="user-chip__caret">▾</span>
+          <div class="user-menu" id="userMenu" hidden>
+            <button data-action="perfil">👤 Meu perfil</button>
+            <button data-action="senha">🔑 Alterar senha</button>
+            <button data-action="auditoria">📜 Minha atividade</button>
+            <hr />
+            <button data-action="sair" class="danger">⏻ Sair</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1 id="pageTitle">—</h1>
+        <p id="pageSubtitle">—</p>
+      </div>
+      <div class="page-head__tools" id="pageTools"></div>
+    </div>
+
+    <main class="content" id="content"></main>
   </div>
 
   <div class="modal-root" id="modalRoot" hidden>
