@@ -1,4 +1,4 @@
-var USERS = [
+var DEFAULT_USERS = [
   { email:"professor@edu.gov.br",   senha:"123456", perfil:"professor",   nome:"Prof. Ana Souza",      escolaId:"e1" },
   { email:"coordenador@edu.gov.br", senha:"123456", perfil:"coordenador", nome:"Coord. Marcos Reis",   escolaId:"e1" },
   { email:"diretor@edu.gov.br",     senha:"123456", perfil:"diretor",     nome:"Dir. Carlos Mendes",   escolaId:"e1" },
@@ -7,9 +7,18 @@ var USERS = [
 
 var K_SESSION = "sgae.session.v1";
 var K_FAILS   = "sgae.fails.v1";
+var K_USERS   = "sgae.users.v2";
 var SESSION_HOURS = 8;
 var MAX_FAILS = 5;
 var perfilSelecionado = "professor";
+
+function getUsuarios() {
+  try {
+    var v = JSON.parse(localStorage.getItem(K_USERS));
+    if (v && v.length) return v;
+  } catch (e) {}
+  return DEFAULT_USERS;
+}
 
 document.querySelectorAll(".perfil-btn").forEach(function (btn) {
   btn.addEventListener("click", function () {
@@ -50,9 +59,10 @@ document.querySelector("#loginForm").addEventListener("submit", function (e) {
     erro.textContent = "🔒 Conta temporariamente bloqueada. Tente novamente em 15 minutos."; erro.hidden = false; return;
   }
 
+  var lista = getUsuarios();
   var user = null;
-  for (var i = 0; i < USERS.length; i++) {
-    if (USERS[i].email === email && USERS[i].senha === senha && USERS[i].perfil === perfilSelecionado) { user = USERS[i]; break; }
+  for (var i = 0; i < lista.length; i++) {
+    if (lista[i].email === email && lista[i].senha === senha && lista[i].perfil === perfilSelecionado) { user = lista[i]; break; }
   }
 
   if (!user) {
