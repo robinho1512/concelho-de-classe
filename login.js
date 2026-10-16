@@ -3,10 +3,10 @@
    ============================================================ */
 
 var USERS = [
-  { email:"professor@edu.gov.br",   senha:"123456", perfil:"professor",   nome:"Prof. Ana Souza",      escola:"EE Dom Pedro II" },
-  { email:"coordenador@edu.gov.br", senha:"123456", perfil:"coordenador", nome:"Coord. Marcos Reis",   escola:"EE Dom Pedro II" },
-  { email:"diretor@edu.gov.br",     senha:"123456", perfil:"diretor",     nome:"Dir. Carlos Mendes",   escola:"EE Dom Pedro II" },
-  { email:"rede@edu.gov.br",        senha:"123456", perfil:"rede",        nome:"Admin. Rede Estadual", escola:"Todas as unidades" }
+  { email:"professor@edu.gov.br",   senha:"123456", perfil:"professor",   nome:"Prof. Ana Souza",      escolaId:"e1" },
+  { email:"coordenador@edu.gov.br", senha:"123456", perfil:"coordenador", nome:"Coord. Marcos Reis",   escolaId:"e1" },
+  { email:"diretor@edu.gov.br",     senha:"123456", perfil:"diretor",     nome:"Dir. Carlos Mendes",   escolaId:"e1" },
+  { email:"rede@edu.gov.br",        senha:"123456", perfil:"rede",        nome:"Admin. Rede Estadual", escolaId:null }
 ];
 
 var K_SESSION = "sgae.session.v1";
@@ -16,7 +16,6 @@ var MAX_FAILS = 5;
 
 var perfilSelecionado = "professor";
 
-/* Perfil */
 document.querySelectorAll(".perfil-btn").forEach(function (btn) {
   btn.addEventListener("click", function () {
     document.querySelectorAll(".perfil-btn").forEach(function (b) { b.classList.remove("is-active"); });
@@ -25,7 +24,6 @@ document.querySelectorAll(".perfil-btn").forEach(function (btn) {
   });
 });
 
-/* Chips demo */
 document.querySelectorAll(".demo-chip").forEach(function (chip) {
   chip.addEventListener("click", function () {
     document.querySelector("#loginEmail").value = chip.dataset.email;
@@ -37,13 +35,11 @@ document.querySelectorAll(".demo-chip").forEach(function (chip) {
   });
 });
 
-/* Toggle senha */
 document.querySelector("#toggleSenha").addEventListener("click", function () {
   var i = document.querySelector("#loginSenha");
   i.type = i.type === "password" ? "text" : "password";
 });
 
-/* Submit */
 document.querySelector("#loginForm").addEventListener("submit", function (e) {
   e.preventDefault();
   var email = document.querySelector("#loginEmail").value.trim().toLowerCase();
@@ -56,7 +52,6 @@ document.querySelector("#loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  /* Bloqueio por tentativas */
   var fails = {};
   try { fails = JSON.parse(localStorage.getItem(K_FAILS)) || {}; } catch (e2) {}
   var f = fails[email] || { count: 0, since: 0 };
@@ -84,7 +79,6 @@ document.querySelector("#loginForm").addEventListener("submit", function (e) {
     return;
   }
 
-  /* Sucesso — limpa falhas */
   delete fails[email];
   try { localStorage.setItem(K_FAILS, JSON.stringify(fails)); } catch (e4) {}
 
@@ -92,7 +86,7 @@ document.querySelector("#loginForm").addEventListener("submit", function (e) {
     email: user.email,
     perfil: user.perfil,
     nome: user.nome,
-    escola: user.escola,
+    escolaId: user.escolaId,
     loginAt: Date.now(),
     expiresAt: Date.now() + SESSION_HOURS * 60 * 60 * 1000,
     token: Math.random().toString(36).slice(2) + Date.now().toString(36)
