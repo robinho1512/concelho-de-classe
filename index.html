@@ -3,73 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduFicha • Login</title>
+  <meta name="description" content="Sistema Estadual de Acompanhamento Escolar" />
+  <title>SGAE • Sistema de Gestão Escolar Estadual</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="page-login">
 
-  <section id="loginScreen" class="login">
-    <div class="login__bg"></div>
-
-    <div class="login__card">
-      <div class="login__brand">
-        <div class="logo">🎓</div>
-        <h1>EduFicha</h1>
-        <p>Sistema Escolar Digital</p>
-      </div>
-
-      <form id="loginForm" class="login__form" novalidate>
-        <div class="field">
-          <label for="loginEmail">E-mail institucional</label>
-          <input type="email" id="loginEmail" placeholder="seu.email@escola.com"
-                 autocomplete="username" required />
-        </div>
-
-        <div class="field">
-          <label for="loginSenha">Senha</label>
-          <input type="password" id="loginSenha" placeholder="••••••"
-                 autocomplete="current-password" required />
-        </div>
-
-        <div class="field">
-          <label>Perfil de acesso</label>
-          <div class="perfil-toggle" id="perfilToggle">
-            <button type="button" class="perfil-btn is-active" data-perfil="professor">
-              <span>👩‍🏫</span> Professor
-            </button>
-            <button type="button" class="perfil-btn" data-perfil="diretor">
-              <span>🧑‍💼</span> Diretor
-            </button>
+  <div class="login-wrap">
+    <aside class="login-hero">
+      <div class="login-hero__top">
+        <div class="login-hero__brand">
+          <span class="crest">🏛️</span>
+          <div>
+            <strong>Rede Estadual de Ensino</strong>
+            <small>Secretaria de Educação</small>
           </div>
         </div>
-
-        <p id="loginErro" class="login__erro" hidden></p>
-
-        <button type="submit" class="btn btn--primary btn--block">Entrar no sistema</button>
-      </form>
-
-      <div class="login__demo">
-        <p class="login__demo-title">Acessos de demonstração</p>
-        <button type="button" class="demo-chip"
-                data-email="professor@escola.com" data-senha="123456" data-perfil="professor">
-          <strong>Prof. Ana</strong> · professor@escola.com / 123456
-        </button>
-        <button type="button" class="demo-chip"
-                data-email="professor2@escola.com" data-senha="123456" data-perfil="professor">
-          <strong>Prof. Bruno</strong> · professor2@escola.com / 123456
-        </button>
-        <button type="button" class="demo-chip"
-                data-email="professor3@escola.com" data-senha="123456" data-perfil="professor">
-          <strong>Prof. Carla</strong> · professor3@escola.com / 123456
-        </button>
-        <button type="button" class="demo-chip"
-                data-email="diretor@escola.com" data-senha="123456" data-perfil="diretor">
-          <strong>Diretor</strong> · diretor@escola.com / 123456
-        </button>
       </div>
-    </div>
-  </section>
 
+      <div class="login-hero__mid">
+        <h1>Acompanhamento pedagógico<br/>em toda a rede.</h1>
+        <p>Fichas de turma, indicadores e relatórios consolidados para professores, coordenadores e gestores escolares.</p>
+
+        <ul class="login-hero__list">
+          <li><span>✓</span> Fichas por bimestre e turma</li>
+          <li><span>✓</span> Relatórios consolidados por escola</li>
+          <li><span>✓</span> Painel gerencial com indicadores</li>
+          <li><span>✓</span> Auditoria e rastreabilidade completa</li>
+        </ul>
+      </div>
+
+      <div class="login-hero__foot">
+        <span>© 2025 Secretaria de Educação • Uso institucional</span>
+      </div>
+    </aside>
+
+    <main class="login-main">
+      <div class="login-card">
+        <div class="login-card__head">
+          <h2>Entrar no sistema</h2>
+          <p>Acesse com suas credenciais institucionais</p>
+        </div>
+
+        <form id="loginForm" class="login-form" novalidate autocomplete="on">
+          <div class="field">
+            <label for="loginEmail">E-mail institucional</label>
+            <div class="input-group">
+              <span class="input-group__ico">✉️</span>
+              <input type="email" id="loginEmail" placeholder="nome.sobrenome@edu.gov.br"
+                     autocomplete="username" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="loginSenha">Senha</label>
+            <div class="input-group">
+              <span class="input-group__ico">🔒</span>
+              <input type="password" id="loginSenha" placeholder="••••••••"
+                     autocomplete="current-password" required />
+              <button type="button" class="input-group__btn" id="toggleSenha" aria-label="Mostrar senha">👁️</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Perfil de acesso</label>
+            <div class="perfil-toggle" id="perfilToggle">
+              <button type="button" class="perfil-btn is-active" data-perfil="professor">👩‍🏫 Professor</button>
+              <button type="button" class="perfil-btn" data-perfil="coordenador">🧭 Coordenador</button>
+              <button type="button" class="perfil-btn" data-perfil="diretor">🧑‍💼 Diretor</button>
+              <button type="button" class="perfil-btn" data-perfil="rede">🏛️ Rede</button>
+            </div>
+          </div>
+
+          <div class="login-row">
+            <label class="check">
+              <input type="checkbox" id="lembrar" />
+              <span>Lembrar-me</span>
+            </label>
+            <a href="#" onclick="return false" class="link-muted">Esqueci a senha</a>
+          </div>
+
+          <p id="loginErro" class="alert alert--error" hidden></p>
+
+          <button type="submit" class="btn btn--primary btn--block btn--lg">
+            Entrar no sistema
+          </button>
+        </form>
+
+        <div class="login-sep"><span>Acessos de demonstração</span></div>
+
+        <div class="login-demo">
+          <button type="button" class="demo-chip"
+                  data-email="professor@edu.gov.br" data-senha="123456" data-perfil="professor">
+            <strong>Prof. Ana Souza</strong><small>professor@edu.gov.br / 123456</small>
+          </button>
+          <button type="button" class="demo-chip"
+                  data-email="coordenador@edu.gov.br" data-senha="123456" data-perfil="coordenador">
+            <strong>Coord. Marcos Reis</strong><small>coordenador@edu.gov.br / 123456</small>
+          </button>
+          <button type="button" class="demo-chip"
+                  data-email="diretor@edu.gov.br" data-senha="123456" data-perfil="diretor">
+            <strong>Dir. Carlos Mendes</strong><small>diretor@edu.gov.br / 123456</small>
+          </button>
+          <button type="button" class="demo-chip"
+                  data-email="rede@edu.gov.br" data-senha="123456" data-perfil="rede">
+            <strong>Admin. Rede</strong><small>rede@edu.gov.br / 123456</small>
+          </button>
+        </div>
+      </div>
+
+      <p class="login-foot">SGAE v2.0 • Ambiente seguro • Conexão criptografada</p>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
   <script src="login.js"></script>
 </body>
 </html>
