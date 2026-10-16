@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Sistema Estadual de Acompanhamento Escolar" />
   <title>SGAE • Sistema de Gestão Escolar Estadual</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -20,7 +19,6 @@
           </div>
         </div>
       </div>
-
       <div class="login-hero__mid">
         <h1>Acompanhamento pedagógico<br/>em toda a rede.</h1>
         <p>Fichas de turma, indicadores e relatórios consolidados para professores, coordenadores e gestores escolares.</p>
@@ -31,7 +29,6 @@
           <li><span>✓</span> Auditoria e rastreabilidade completa</li>
         </ul>
       </div>
-
       <div class="login-hero__foot">
         <span>© 2025 Secretaria de Educação • Uso institucional</span>
       </div>
@@ -49,21 +46,17 @@
             <label for="loginEmail">E-mail institucional</label>
             <div class="input-group">
               <span class="input-group__ico">✉️</span>
-              <input type="email" id="loginEmail" placeholder="nome.sobrenome@edu.gov.br"
-                     autocomplete="username" required />
+              <input type="email" id="loginEmail" placeholder="nome.sobrenome@edu.gov.br" autocomplete="username" required />
             </div>
           </div>
-
           <div class="field">
             <label for="loginSenha">Senha</label>
             <div class="input-group">
               <span class="input-group__ico">🔒</span>
-              <input type="password" id="loginSenha" placeholder="••••••••"
-                     autocomplete="current-password" required />
+              <input type="password" id="loginSenha" placeholder="••••••••" autocomplete="current-password" required />
               <button type="button" class="input-group__btn" id="toggleSenha" aria-label="Mostrar senha">👁️</button>
             </div>
           </div>
-
           <div class="field">
             <label>Perfil de acesso</label>
             <div class="perfil-toggle" id="perfilToggle">
@@ -73,44 +66,31 @@
               <button type="button" class="perfil-btn" data-perfil="rede">🏛️ Rede</button>
             </div>
           </div>
-
           <div class="login-row">
-            <label class="check">
-              <input type="checkbox" id="lembrar" />
-              <span>Lembrar-me</span>
-            </label>
+            <label class="check"><input type="checkbox" id="lembrar" /><span>Lembrar-me</span></label>
             <a href="#" onclick="return false" class="link-muted">Esqueci a senha</a>
           </div>
-
           <p id="loginErro" class="alert alert--error" hidden></p>
-
-          <button type="submit" class="btn btn--primary btn--block btn--lg">
-            Entrar no sistema
-          </button>
+          <button type="submit" class="btn btn--primary btn--block btn--lg">Entrar no sistema</button>
         </form>
 
         <div class="login-sep"><span>Acessos de demonstração</span></div>
 
         <div class="login-demo">
-          <button type="button" class="demo-chip"
-                  data-email="professor@edu.gov.br" data-senha="123456" data-perfil="professor">
+          <button type="button" class="demo-chip" data-email="professor@edu.gov.br" data-senha="123456" data-perfil="professor">
             <strong>Prof. Ana Souza</strong><small>professor@edu.gov.br / 123456</small>
           </button>
-          <button type="button" class="demo-chip"
-                  data-email="coordenador@edu.gov.br" data-senha="123456" data-perfil="coordenador">
+          <button type="button" class="demo-chip" data-email="coordenador@edu.gov.br" data-senha="123456" data-perfil="coordenador">
             <strong>Coord. Marcos Reis</strong><small>coordenador@edu.gov.br / 123456</small>
           </button>
-          <button type="button" class="demo-chip"
-                  data-email="diretor@edu.gov.br" data-senha="123456" data-perfil="diretor">
+          <button type="button" class="demo-chip" data-email="diretor@edu.gov.br" data-senha="123456" data-perfil="diretor">
             <strong>Dir. Carlos Mendes</strong><small>diretor@edu.gov.br / 123456</small>
           </button>
-          <button type="button" class="demo-chip"
-                  data-email="rede@edu.gov.br" data-senha="123456" data-perfil="rede">
+          <button type="button" class="demo-chip" data-email="rede@edu.gov.br" data-senha="123456" data-perfil="rede">
             <strong>Admin. Rede</strong><small>rede@edu.gov.br / 123456</small>
           </button>
         </div>
       </div>
-
       <p class="login-foot">SGAE v2.0 • Ambiente seguro • Conexão criptografada</p>
     </main>
   </div>
